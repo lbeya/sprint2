@@ -48,19 +48,20 @@ class CommentaireController extends AbstractController
         $Form=$this->createForm(RechBackType::class,$commentaire);
 
 
-    $Form->handleRequest($request);
-    if($Form->isSubmitted()){
-        $commentaires=$repo
-            ->findBy(array('idUtilisateur'=>$commentaire->getIdUtilisateur()));
-    }
-    else{
-        $commentaires=$repo->findAll();;
-
-    }
-    $id = $Form['idUtilisateur']->getData();
-    if($id == 0){
-        $this->addFlash('error', 'Ce champ est obligatoire');
-    }
+        $Form->handleRequest($request);
+        if ($Form->isSubmitted()) {
+            $commentaire = $Form->getData();
+            $id = $commentaire->getIdUtilisateur();
+            if ($id == NULL) {
+                $this->addFlash('error', 'Vous devez inserer un id');
+                return $this->redirectToRoute('app_GetAll_commentaire');
+            }
+            $commentaires = $repo->findBy(array('idUtilisateur' => $id));
+        } else {
+            $commentaires = $repo->findAll();
+        }
+        $commentaire = $Form->getData();
+        $id = $commentaire->getIdUtilisateur();
     $comment =$repo->countCommentaire($id);
 
     return $this->render('commentaire/back.html.twig',
@@ -81,7 +82,6 @@ class CommentaireController extends AbstractController
         $commentaire=new Commentaire();
         $commentaire ->setIdproduit(1);
         $commentaire ->setIdUtilisateur(1);
-        $commentaire ->setType("Positive");
         $commentaire->setDate(new \DateTime('now'));
         //cération du formulaire
         $form=$this->createForm(CommentaireType::class,$commentaire);
@@ -89,7 +89,14 @@ class CommentaireController extends AbstractController
         //remplir l'objet a partir du formulaire
         //les getters
         $form->handleRequest($request);
-        if($form->isSubmitted() && $form->isValid()){
+
+        if($form->isSubmitted() ){
+            $commentaire = $form->getData();
+            $id = $commentaire->getCommentaire();
+            if ($id == NULL) {
+                $this->addFlash('error', 'Vous devez inserer un commentaire');
+                return $this->redirectToRoute('app_affiche_classroom');
+            }
             //gestionaire
             $em=$doctrine->getManager();
             //ajout
@@ -99,6 +106,9 @@ class CommentaireController extends AbstractController
             $this->addFlash('success', 'Votre commentaire a été ajouté avec succès !');
             return $this->redirectToRoute('app_affiche_classroom');
         }
+
+
+
               //on va envoyer le formulaire a la vue
               return $this->renderForm('Commentaire/add.html.twig', [
                 'myForm' => $form,

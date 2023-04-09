@@ -38,14 +38,13 @@ class Commentaire
   
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $date = null;
-
-
-    #[ORM\Column(length: 65535)]
-    private ?string $type = null;
-
     
     #[ORM\Column]
     private ?int $idproduit = null;
+
+    #[ORM\ManyToOne(inversedBy: 'commentaires')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?TypeCommentaire $typeCommentaire = null;
 
     public function getId(): ?int
     {
@@ -88,18 +87,6 @@ class Commentaire
         return $this;
     }
 
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
-
-    public function setType(string $type): self
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
     public function getIdproduit(): ?int
     {
         return $this->idproduit;
@@ -108,6 +95,18 @@ class Commentaire
     public function setIdproduit(int $idproduit): self
     {
         $this->idproduit = $idproduit;
+
+        return $this;
+    }
+
+    public function getTypeCommentaire(): ?TypeCommentaire
+    {
+        return $this->typeCommentaire;
+    }
+
+    public function setTypeCommentaire(?TypeCommentaire $typeCommentaire): self
+    {
+        $this->typeCommentaire = $typeCommentaire;
 
         return $this;
     }
