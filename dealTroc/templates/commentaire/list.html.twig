@@ -1,0 +1,38 @@
+{% extends "baseFront.html.twig" %}
+{% block hero %}
+
+{% if app.session.flashbag.has('success') %}
+    <div class="alert alert-success">
+        {{ app.session.flashbag.get('success')[0] }}
+    </div>
+{% endif %}
+
+{% if app.session.flashbag.has('error') %}
+    <div class="alert alert-danger">
+        {{ app.session.flashbag.get('error')[0] }}
+    </div>
+{% endif %}
+
+<table border="1">
+<thead>
+   <tr>
+    <th>commentaire</th>
+    <th>date</th>
+   </tr>
+</thead>
+  {% for l in listes %}
+  <tr>
+     {# <td>{{ l.Id }}</td> #}
+      <td>{{ l.commentaire }}</td>
+      {#<td>{{ l.idUtilisateur }}</td>   #}  
+      <td>{{ l.date | date('d-m-Y') }}</td>
+     {# <td>{{ l.type }}</td>#}
+     {# <td>{{ l.idproduit }}</td>#}
+      <td> <button type="button" class="btn btn-outline-danger"><a href= {{ path('app_del1_classroom',{'id':l.Id} )}}> Supprimer</button>  </td>
+      <td> <button type="button" class="btn btn-outline-dark"><a href= {{ path('app_modif_Commentaire',{'id':l.Id} )}}> Modifier</button>  </td>
+    </tr>
+  {% endfor %}
+  </table>
+  <button type="button" class="btn btn-outline-success"><a href= {{ path('app_add_Commentaire')}}> Ajouter</button>
+
+{% endblock %}

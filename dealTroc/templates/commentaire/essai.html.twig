@@ -1,0 +1,14 @@
+{% extends "baseFront.html.twig" %}
+{% block hero %}
+
+{% if app.flashes('error') is not empty %}
+    <div class="alert alert-danger">
+        {% for message in app.flashes('error') %}
+            {{ message }}
+        {% endfor %}
+    </div>
+{% endif %}
+
+Impossible de suprimer ou modifier ce commentaire
+
+{% endblock %}
