@@ -15,14 +15,10 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\CommentaireRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\QueryBuilder;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 use App\Entity\Commentaire;
 use App\Form\CommentaireType;
 use App\Form\RechBackType;
-use Doctrine\ORM\Query\AST\WhereClause;
 
 class CommentaireController extends AbstractController
 {

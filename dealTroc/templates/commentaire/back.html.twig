@@ -1,5 +1,5 @@
-{% extends "baseFront.html.twig" %}
-{% block hero %}
+{% extends "baseBack.html.twig" %}
+{% block body %}
 
 {% if app.session.flashbag.has('error') %}
     <div class="alert alert-danger">
@@ -38,6 +38,8 @@
 {% if id != 0 %}
       le nombre de commantaire faite par l'utilisateur d'id {{id}} est {{nbr}}
 {% endif %}
+</table>
 {% endif %}
+
 
 {% endblock %}

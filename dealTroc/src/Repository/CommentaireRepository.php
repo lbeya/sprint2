@@ -56,6 +56,28 @@ class CommentaireRepository extends ServiceEntityRepository
         return $query->getResult();
      }
      
+     public function findOneById($id)
+     {
+         $entityManager = $this->getEntityManager();
+     
+         $query = $entityManager->createQuery('SELECT c FROM App\Entity\Commentaire c WHERE c.id = :id')
+         ->setParameter('id', $id);
+     
+         $commentaire = $query->getOneOrNullResult();
+     
+         return $commentaire;
+     }
+     public function findOneByIdComm($id)
+     {
+         $entityManager = $this->getEntityManager();
+     
+         $query = $entityManager->createQuery('SELECT c.idUtilisateur FROM App\Entity\Commentaire c WHERE c.id = :id')
+         ->setParameter('id', $id);
+     
+         $iduser = $query->getOneOrNullResult();
+     
+         return $iduser;
+     }
 
     public function countCommentaire($idUtilisateur){
         $entityManager = $this->getEntityManager();
