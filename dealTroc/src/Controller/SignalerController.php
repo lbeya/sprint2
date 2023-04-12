@@ -60,12 +60,12 @@ class SignalerController extends AbstractController
             $em->flush();
 
             $nbr= $repo1->countBySignalC($id);
-            if($nbr == 3 ){
+            if($nbr == 2 ){
                 $Commentaire= $repo->find($id);
                 $em=$doctrine->getManager();
                     $em->remove($Commentaire);
                     $em->flush();
-                    $this->addFlash('error', 'Cet commentaire a été retiré');
+                    $this->addFlash('error', 'Ce commentaire a été retiré');
                     return $this->redirectToRoute('app_affiche_classroom');
             }
 

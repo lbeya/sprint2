@@ -86,7 +86,13 @@ class CommentaireRepository extends ServiceEntityRepository
         ->setParameter('idUtilisateur',$idUtilisateur);
         return $query->getSingleScalarResult();
     }
-
+    public function countCommentaireArticle($id){
+        $entityManager = $this->getEntityManager();
+        $query=$entityManager
+        ->createQuery("SELECT count(c) FROM App\Entity\Commentaire c WHERE c.idproduit = :idproduit")
+        ->setParameter('idproduit',$id);
+        return $query->getSingleScalarResult();
+    }
 
 
 //    /**

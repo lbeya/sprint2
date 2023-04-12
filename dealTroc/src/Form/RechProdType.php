@@ -2,7 +2,6 @@
 
 namespace App\Form;
 
-use App\Entity\Commentaire;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -11,14 +10,13 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 
-
-class RechBackType extends AbstractType
+class RechProdType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-        ->add('idUtilisateur',TextType::class,[
-            'label'=>"saisissez l'id de l'utilisateur",])
+        ->add('idproduit',TextType::class,[
+            'label'=>"saisissez l'id du produit",])
 
         ->add('Rechercher',SubmitType::class)
         ;
@@ -27,7 +25,7 @@ class RechBackType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Commentaire::class,
+            // Configure your form options here
         ]);
     }
 }

@@ -22,7 +22,7 @@ class CommentaireType extends AbstractType
         $builder
         
             ->add('commentaire',TextType::class,[
-            'label'=>"ecrivez votre commentaire",
+            'label'=>"saisissez votre commentaire",
             'constraints' => [
                /* new NotBlank([
                    'message' => 'Veuillez saisir un commentaire'

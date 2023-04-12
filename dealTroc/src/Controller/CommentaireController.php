@@ -21,6 +21,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use App\Entity\Commentaire;
 use App\Form\CommentaireType;
 use App\Form\RechBackType;
+use App\Form\RechProdType;
+
+
 
 class CommentaireController extends AbstractController
 {
@@ -39,7 +42,7 @@ class CommentaireController extends AbstractController
     }
 
     
-    #[Route('/commentaire/getAll', name: 'app_GetAll_commentaire')]
+    #[Route('/commentaire/RechParUser', name: 'app_GetAll_commentaire')]
     public function GetAll_(CommentaireRepository $repo,SignalerRepository $repo1,Request $request): Response
     {
         $commentaire=new Commentaire();
@@ -70,6 +73,40 @@ class CommentaireController extends AbstractController
         'nbr'=>$comment,
         'id'=>$id,
         'nbr1'=>$nbr
+
+     ));
+
+
+    }
+
+    #[Route('/commentaire/RechParArticle', name: 'app_GetAll1_commentaire')]
+    public function GetAll1_(CommentaireRepository $repo,SignalerRepository $repo1,Request $request): Response
+    {
+        $commentaire=new Commentaire();
+        $Form=$this->createForm(RechProdType::class,$commentaire);
+
+
+        $Form->handleRequest($request);
+        if ($Form->isSubmitted() && $Form->isValid()) {
+            $commentaire = $Form->getData();
+            $id = $commentaire->getIdproduit();
+            if ($id == NULL) {
+                $this->addFlash('error', 'Vous devez inserer un id');
+                return $this->redirectToRoute('app_GetAll_commentaire');
+            }
+            $commentaires = $repo->findBy(array('idproduit' => $id));
+        } else {
+            $commentaires = $repo->findAll();
+        }
+        $commentaire = $Form->getData();
+        $id = $commentaire->getIdproduit();
+    $comment =$repo->countCommentaireArticle($id);
+
+    return $this->render('commentaire/back.html.twig',
+        array('form'=>$Form->createView(),
+        'listes'=>$commentaires,
+        'nbr'=>$comment,
+        'id'=>$id,
 
      ));
 

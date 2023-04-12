@@ -17,7 +17,7 @@ class SignalerType extends AbstractType
     {
         $builder
             ->add('cause',TextType::class,[
-                'label'=>"ecrivez la cause de votre signal",
+                'label'=>"saisissez la raison de votre signalement",
                 'constraints' => [
                    /* new NotBlank([
                        'message' => 'Veuillez saisir un commentaire'
