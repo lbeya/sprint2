@@ -14,6 +14,8 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\CommentaireRepository;
+use App\Repository\SignalerRepository;
+
 use Doctrine\Persistence\ManagerRegistry;
 
 use App\Entity\Commentaire;
@@ -38,14 +40,14 @@ class CommentaireController extends AbstractController
 
     
     #[Route('/commentaire/getAll', name: 'app_GetAll_commentaire')]
-    public function GetAll_(CommentaireRepository $repo,Request $request): Response
+    public function GetAll_(CommentaireRepository $repo,SignalerRepository $repo1,Request $request): Response
     {
         $commentaire=new Commentaire();
         $Form=$this->createForm(RechBackType::class,$commentaire);
 
 
         $Form->handleRequest($request);
-        if ($Form->isSubmitted()) {
+        if ($Form->isSubmitted() && $Form->isValid()) {
             $commentaire = $Form->getData();
             $id = $commentaire->getIdUtilisateur();
             if ($id == NULL) {
@@ -60,11 +62,14 @@ class CommentaireController extends AbstractController
         $id = $commentaire->getIdUtilisateur();
     $comment =$repo->countCommentaire($id);
 
+    $nbr = $repo1->countBySignalU($id);
+
     return $this->render('commentaire/back.html.twig',
         array('form'=>$Form->createView(),
         'listes'=>$commentaires,
         'nbr'=>$comment,
         'id'=>$id,
+        'nbr1'=>$nbr
 
      ));
 
@@ -86,7 +91,7 @@ class CommentaireController extends AbstractController
         //les getters
         $form->handleRequest($request);
 
-        if($form->isSubmitted() ){
+        if($form->isSubmitted() && $form->isValid() ){
             $commentaire = $form->getData();
             $id = $commentaire->getCommentaire();
             if ($id == NULL) {

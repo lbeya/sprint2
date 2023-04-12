@@ -28,7 +28,7 @@ class SignalerController extends AbstractController
     }
 
     #[Route('/signal/add/{id}', name: 'app_add_signal')]
-    public function addSignal($id,Request $request,ManagerRegistry $doctrine,CommentaireRepository $repo): Response
+    public function addSignal($id,Request $request,ManagerRegistry $doctrine,CommentaireRepository $repo,SignalerRepository $repo1): Response
     {   $signal=new Signaler();
         $comment=new Commentaire();
 
@@ -46,7 +46,7 @@ class SignalerController extends AbstractController
         //les getters
         $form->handleRequest($request);
 
-        if($form->isSubmitted() ){
+        if($form->isSubmitted() && $form->isValid() ){
             $signal = $form->getData();
             $ch = $signal->getCause();
             if ($ch == NULL) {
@@ -58,6 +58,17 @@ class SignalerController extends AbstractController
             //ajout
             $em->persist($signal);
             $em->flush();
+
+            $nbr= $repo1->countBySignalC($id);
+            if($nbr == 3 ){
+                $Commentaire= $repo->find($id);
+                $em=$doctrine->getManager();
+                    $em->remove($Commentaire);
+                    $em->flush();
+                    $this->addFlash('error', 'Cet commentaire a été retiré');
+                    return $this->redirectToRoute('app_affiche_classroom');
+            }
+
 
             $this->addFlash('success', 'Votre cause a été ajouté avec succès !');
             return $this->redirectToRoute('app_affiche_classroom');

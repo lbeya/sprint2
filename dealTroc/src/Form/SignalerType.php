@@ -19,14 +19,14 @@ class SignalerType extends AbstractType
             ->add('cause',TextType::class,[
                 'label'=>"ecrivez la cause de votre signal",
                 'constraints' => [
-                    new NotBlank([
+                   /* new NotBlank([
                        'message' => 'Veuillez saisir un commentaire'
-                    ]),
+                    ]),*/
                     new Length([
                        'min'=> 3,
                        'max'=> 50,
-                       'minMessage'=> 'Votre commentaire doit contenir plus que 5 caractéres methode2 ',
-                       'maxMessage'=> 'Votre commentaire a depassé 50 caractéres methode2',
+                       'minMessage'=> 'Votre cause doit contenir plus que 5 caractéres ',
+                       'maxMessage'=> 'Votre cause a depassé 50 caractéres ',
                     ])
                  ]
                 ])

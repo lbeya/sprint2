@@ -39,6 +39,24 @@ class SignalerRepository extends ServiceEntityRepository
         }
     }
 
+    public function countBySignalC($idCommentaire){
+        $entityManager = $this->getEntityManager();
+        $query=$entityManager
+        ->createQuery("SELECT count(c) FROM App\Entity\Signaler c join c.commentaire s WHERE s.id = :idCommentaire")
+        ->setParameter('idCommentaire',$idCommentaire);
+        return $query->getSingleScalarResult();
+    }
+
+    public function countBySignalU($idU){
+        $entityManager = $this->getEntityManager();
+        $query=$entityManager
+        ->createQuery("SELECT count(c) FROM App\Entity\Signaler c WHERE c.userProp = :id")
+        ->setParameter('id',$idU);
+        return $query->getSingleScalarResult();
+    }
+}
+
+
 //    /**
 //     * @return Signaler[] Returns an array of Signaler objects
 //     */
@@ -64,4 +82,4 @@ class SignalerRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-}
+

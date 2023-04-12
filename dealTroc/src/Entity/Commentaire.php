@@ -24,8 +24,8 @@ class Commentaire
 
 
     #[ORM\Column(length: 65535)]
-    /*#[Assert\NotBlank(message:"le champ est vide")]
-    #[Assert\Length(
+    //#[Assert\NotBlank(message:"le champ est vide")]
+   /* #[Assert\Length(
         min: 5,
         max: 50,
         minMessage: 'Votre commentaire doit contenir plus que 5 caractéres ',
