@@ -56,6 +56,25 @@ class CommentaireRepository extends ServiceEntityRepository
         return $query->getResult();
      }
      
+     public function countByCommentaireIsSignaler($id) {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager
+            ->createQuery("SELECT COUNT(c) FROM App\Entity\Commentaire c WHERE c.commentaire LIKE :comment AND c.idUtilisateur = :id")
+            ->setParameter('id', $id)
+            ->setParameter('comment', 'Signaler');
+        return $query->getSingleScalarResult();
+    }
+    public function countByArticleIsSignaler($id) {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager
+            ->createQuery("SELECT COUNT(c) FROM App\Entity\Commentaire c WHERE c.commentaire LIKE :comment AND c.idproduit = :id")
+            ->setParameter('id', $id)
+            ->setParameter('comment', 'Signaler');
+        return $query->getSingleScalarResult();
+    }
+    
+
+
      public function findOneById($id)
      {
          $entityManager = $this->getEntityManager();
@@ -79,6 +98,17 @@ class CommentaireRepository extends ServiceEntityRepository
          return $iduser;
      }
 
+     public function findOneEmailByIdArticle($id)
+     {
+         $entityManager = $this->getEntityManager();
+     
+         $query = $entityManager->createQuery('SELECT u.email FROM App\Entity\utilisateur u WHERE c.idproduit = :id')
+         ->setParameter('id', $id);
+     
+         $iduser = $query->getOneOrNullResult();
+     
+         return $iduser;
+     }
     public function countCommentaire($idUtilisateur){
         $entityManager = $this->getEntityManager();
         $query=$entityManager

@@ -35,9 +35,14 @@
       <td>{{ l.idproduit }}</td>
 </tr>
   {% endfor %}
-{% if id != 0 %}
-      le nombre de commantaire faite par l'utilisateur d'id {{id}} est {{nbr}}
+{% if nbr != 0 %}
+      le nombre de commantaire faite par l'utilisateur d'id {{id}} est {{nbr}} et il a éte signaler {{nbr1}} fois
 {% endif %}
+
+{% if nbr2 != 0 %}
+    Le nombre de commentaires faits pour l'article d'ID {{id}} est {{nbr2}} et il a été signalé {{nbr3}} fois.
+{% endif %}
+
 </table>
 {% endif %}
 

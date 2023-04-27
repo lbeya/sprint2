@@ -4,11 +4,10 @@ namespace App\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 
 
 
@@ -33,8 +32,74 @@ class CommentaireController extends AbstractController
     {
         $this->flashBag = $flashBag;
     }
+    #[Route('/commentaire/mail', name: 'app_commentaire_mail')]
+    public function sendEmail(MailerInterface $mailer): Response
+    {
+        $email = (new Email())
+            ->from('lbeya99@gmail.com')
+            ->to('lbeya@gmail.com')
+            ->subject('Test email')
+            ->text('This is a test email sent via Symfony.');
+    
+        $mailer->send($email);
+        
+        return $this->redirectToRoute('app_affiche_classroom');
+    }
+    
+    
+    #[Route('/Commentaire/add', name: 'app_add_Commentaire')]
+    public function addCommentaire(Request $request,ManagerRegistry $doctrine,MailerInterface $mailer): Response
+    {   
+        $commentaire=new Commentaire();
+        $commentaire ->setIdproduit(1);
+        $commentaire ->setIdUtilisateur(1);
+        $commentaire->setDate(new \DateTime('now'));
+
+        //cération du formulaire
+        $form=$this->createForm(CommentaireType::class,$commentaire);
+
+        //remplir l'objet a partir du formulaire
+        //les getters
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid() ){
+            $commentaire = $form->getData();
+            $id = $commentaire->getCommentaire();
+            if ($id == NULL) {
+                $this->addFlash('error', 'Vous devez inserer un commentaire');
+                return $this->redirectToRoute('app_affiche_classroom');
+            }
+            //gestionaire
+            $em=$doctrine->getManager();
+            //ajout
+            $em->persist($commentaire);
+            $em->flush();
+
+            //$email0=$commentaire->findOneEmailByIdArticle($id);
+            $email = (new Email())
+            ->from('lbeya99@gmail.com')
+            ->to('lbeya99@gmail.com')
+            ->subject('DealTroc')
+            ->html('<html><body><h1><span style="color:pink;">Welcome to DealTroc</span></h1><h1><p><span style="color:green">Someone commented your article</p></body></html>');
+
+    
+        $mailer->send($email);
+
+            $this->addFlash('success', 'Votre commentaire a été ajouté avec succès !');
+            return $this->redirectToRoute('app_affiche_classroom');
+        }
+
+
+
+              //on va envoyer le formulaire a la vue
+              return $this->renderForm('Commentaire/add.html.twig', [
+                'myForm' => $form,
+            ]);
+}
+
     #[Route('/commentaire', name: 'app_commentaire')]
     public function index(): Response
+    
     {
         return $this->render('commentaire/index.html.twig', [
             'controller_name' => 'CommentaireController',
@@ -63,16 +128,17 @@ class CommentaireController extends AbstractController
         }
         $commentaire = $Form->getData();
         $id = $commentaire->getIdUtilisateur();
-    $comment =$repo->countCommentaire($id);
+    $nbrComment =$repo->countCommentaire($id);
 
-    $nbr = $repo1->countBySignalU($id);
+    $nbrCommentSignaler = $repo->countByCommentaireIsSignaler($id);
 
     return $this->render('commentaire/back.html.twig',
         array('form'=>$Form->createView(),
         'listes'=>$commentaires,
-        'nbr'=>$comment,
+        'nbr'=>$nbrComment,
         'id'=>$id,
-        'nbr1'=>$nbr
+        'nbr2'=>0,
+        'nbr1'=>$nbrCommentSignaler
 
      ));
 
@@ -100,12 +166,15 @@ class CommentaireController extends AbstractController
         }
         $commentaire = $Form->getData();
         $id = $commentaire->getIdproduit();
-    $comment =$repo->countCommentaireArticle($id);
+    $nbrComment =$repo->countCommentaireArticle($id);
+    $nbrCommentSignaler = $repo->countByCommentaireIsSignaler($id);
 
     return $this->render('commentaire/back.html.twig',
         array('form'=>$Form->createView(),
+        'nbr'=>0,
         'listes'=>$commentaires,
-        'nbr'=>$comment,
+        'nbr2'=>$nbrComment,
+        'nbr3'=>$nbrCommentSignaler,
         'id'=>$id,
 
      ));
@@ -114,7 +183,7 @@ class CommentaireController extends AbstractController
     }
 
 
-    #[Route('/Commentaire/add', name: 'app_add_Commentaire')]
+   /* #[Route('/Commentaire/add', name: 'app_add_Commentaire')]
     public function addCommentaire(Request $request,ManagerRegistry $doctrine): Response
     {   
         $commentaire=new Commentaire();
@@ -151,7 +220,8 @@ class CommentaireController extends AbstractController
               return $this->renderForm('Commentaire/add.html.twig', [
                 'myForm' => $form,
             ]);
-}
+}*/
+
 
 ////////////////////////////
 #[Route('/Commentaire/Modif/{id}', name: 'app_modif_Commentaire')]
@@ -239,7 +309,10 @@ public function Affiche(CommentaireRepository $commentRepository): Response
 {   $idUser=1;
     $qb = $commentRepository->createQueryBuilder('c')
     ->Where('c.idproduit =:x')
-    ->setParameter('x', $idUser);
+    ->andWhere('c.commentaire NOT LIKE :comment ')
+    ->setParameter('x', $idUser)
+    ->setParameter('comment', 'Signaler');
+
     $query = $qb->getQuery();
     $comments = $query->getResult();
     return $this->renderForm('Commentaire/list.html.twig', [
