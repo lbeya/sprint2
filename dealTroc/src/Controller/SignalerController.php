@@ -2,17 +2,18 @@
 
 namespace App\Controller;
 
-use App\Entity\Commentaire;
+use Twilio\Rest\Client;
 use App\Entity\Signaler;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\HttpFoundation\Request;
+use App\Form\SignalerType;
+use App\Entity\Commentaire;
 use App\Repository\SignalerRepository;
 use App\Repository\CommentaireRepository;
+use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-use App\Form\SignalerType;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 
 
@@ -75,6 +76,34 @@ class SignalerController extends AbstractController
                 $em->persist($Commentaire);
                 $em->flush();
                 $this->addFlash('error', 'Ce commentaire a été retiré');
+
+                
+                        // Replace with your Twilio Account SID and Auth Token
+                        $sid = 'AC51068d2d77a6e95960b5150a241f2e2a';
+                        $token = '89a86a4b3cd8da668a967314ad19ea22';
+                
+                        // Create a new Twilio client instance
+                        $twilioClient = new Client($sid, $token);
+                
+                        // Replace with the phone number you want to send the SMS to
+                        $toNumber = '+21695816137';
+                
+                        // Replace with the Twilio phone number you want to send the SMS from
+                        $fromNumber = '+16076382779';
+                
+                        // Replace with the SMS message you want to send
+                        $messageBody = 'Vous avez été sugnalé, voyre commentaire a été retiré';
+                
+                        // Use the Twilio client to send the SMS message
+                        $twilioClient->messages->create(
+                            $toNumber, // The phone number to send the SMS to
+                            [
+                                'from' => $fromNumber, // The Twilio phone number to send the SMS from
+                                'body' => $messageBody, // The message body
+                            ]
+                        );
+                            
+
                 return $this->redirectToRoute('app_affiche_classroom');
             }
             

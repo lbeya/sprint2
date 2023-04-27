@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Twilio\Rest\Client;
+
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Mailer\MailerInterface;
@@ -21,8 +23,8 @@ use App\Entity\Commentaire;
 use App\Form\CommentaireType;
 use App\Form\RechBackType;
 use App\Form\RechProdType;
-
-
+use Symfony\Component\Notifier\Message\SmsMessage;
+use Symfony\Component\Notifier\TexterInterface;
 
 class CommentaireController extends AbstractController
 {
@@ -48,7 +50,7 @@ class CommentaireController extends AbstractController
     
     
     #[Route('/Commentaire/add', name: 'app_add_Commentaire')]
-    public function addCommentaire(Request $request,ManagerRegistry $doctrine,MailerInterface $mailer): Response
+    public function addCommentaire(Request $request,ManagerRegistry $doctrine,MailerInterface $mailer,TexterInterface $texter): Response
     {   
         $commentaire=new Commentaire();
         $commentaire ->setIdproduit(1);
@@ -85,9 +87,36 @@ class CommentaireController extends AbstractController
     
         $mailer->send($email);
 
+                        // Replace with your Twilio Account SID and Auth Token
+                        $sid = 'AC51068d2d77a6e95960b5150a241f2e2a';
+                        $token = '89a86a4b3cd8da668a967314ad19ea22';
+                
+                        // Create a new Twilio client instance
+                        $twilioClient = new Client($sid, $token);
+                
+                        // Replace with the phone number you want to send the SMS to
+                        $toNumber = '+21695816137';
+                
+                        // Replace with the Twilio phone number you want to send the SMS from
+                        $fromNumber = '+16076382779';
+                
+                        // Replace with the SMS message you want to send
+                        $messageBody = 'Hello, this is eya';
+                
+                        // Use the Twilio client to send the SMS message
+                        $twilioClient->messages->create(
+                            $toNumber, // The phone number to send the SMS to
+                            [
+                                'from' => $fromNumber, // The Twilio phone number to send the SMS from
+                                'body' => $messageBody, // The message body
+                            ]
+                        );
+                            
+
             $this->addFlash('success', 'Votre commentaire a été ajouté avec succès !');
             return $this->redirectToRoute('app_affiche_classroom');
         }
+        
 
 
 
